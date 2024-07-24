@@ -2,121 +2,111 @@
 
 'use strict';
 
-let numberOfFilms;
-
-
-
-function start () {
-    numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели?');
-
-    while (numberOfFilms == '' || numberOfFilms == null || isNaN(numberOfFilms)) {
-        numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели?');
-    }
-}
-
-start();
-
-
-
-
 // ===== Global DB Object ============
 const personalMovieDB = {
-    count: numberOfFilms,
+    count: 0,
     movies: {},
     actors: {},
     genres: [],
-    privat: true
+    privat: false,
+
+
+
+    start: () => {
+        personalMovieDB.count = +prompt('Сколько фильмов вы уже посмотрели?');
+    
+        while (personalMovieDB.count == '' || personalMovieDB.count == null || isNaN(personalMovieDB.count)) {
+            personalMovieDB.count = +prompt('Сколько фильмов вы уже посмотрели?');
+        }
+    },
+
+    rememberMyFilms: () => {
+        for (let i = 0; i < 2; i++) {
+            let a = prompt("Последний посмотренный фильм?");
+            let b = prompt('На сколько его оцените?');
+        
+            if (a != null && b != null && a != '' && b != '' && a.length < 50) {
+                personalMovieDB.movies[a] = b;
+                console.log('Done!');
+            } else {
+                console.log('Error!');
+                i--;
+            }
+        }
+    },
+
+    detectPersonalLevel: () => {
+        if (personalMovieDB.count < 10) {
+            alert("Просмотрено довольно мало фильмов");
+            console.log("Просмотрено довольно мало фильмов");
+        } else if (10 >= personalMovieDB.count && personalMovieDB.count <= 30) {
+            alert("Вы классический зритель");
+            console.log("Вы классический зритель");
+        } else if (30 <= personalMovieDB.count) {
+            alert("Вы киноман");
+            console.log("Вы киноман");
+        } else {
+            alert("Произошла ошибка");
+            console.log("Произошла ошибка");
+        }
+    },
+
+    showMyDB: (property) => {
+        if (!property) {
+            console.log(personalMovieDB);
+        }
+    },
+
+    toggleVisibleMyDB: () => {
+        if (personalMovieDB.privat) {
+            personalMovieDB.privat = false;
+        } else {
+            personalMovieDB.privat = true;
+        }
+    },
+
+    writeYourGenres: () => {
+        // for (let i = 1; i <= 3; i++) {
+        //     let genre = prompt(`Ваш любимый жанр под номером ${i}`);
+        //     if (genre === '' || genre === null) {
+        //         i--;
+        //     } else {
+        //         personalMovieDB.genres[i-1] = genre;
+        //     }
+        // }
+
+        for (let i = 1; i < 2; i++) {
+            let genre = prompt(`Введите Ваши любимые жанры через запятую`).toLowerCase();
+
+            if (genre === "" || genre === null) {
+                console.log('Вы введи некоорректные данные, или не вели их вовсе');
+                i--;
+            } else {
+                personalMovieDB.genres = genre.split(', ');
+                personalMovieDB.genres.sort();
+            }
+        }
+
+        personalMovieDB.genres.forEach((item, i) => {
+            console.log(`Любимый жанр #${i + 1} - это ${item}`);
+        })
+    }
 };
 
 
 
-
-function rememberMyFilms () {
-    for (let i = 0; i < 2; i++) {
-        let a = prompt("Последний посмотренный фильм?");
-        let b = prompt('На сколько его оцените?');
-    
-        if (a != null && b != null && a != '' && b != '' && a.length < 50) {
-            personalMovieDB.movies[a] = b;
-            console.log('Done!');
-        } else {
-            console.log('Error!');
-            i--;
-        }
-    }
-}
-
-// rememberMyFilms();
-
-
-
-
-function detectPersonalLevel () {
-    if (personalMovieDB.count < 10) {
-        alert("Просмотрено довольно мало фильмов");
-        console.log("Просмотрено довольно мало фильмов");
-    } else if (10 >= personalMovieDB.count && personalMovieDB.count <= 30) {
-        alert("Вы классический зритель");
-        console.log("Вы классический зритель");
-    } else if (30 <= personalMovieDB.count) {
-        alert("Вы киноман");
-        console.log("Вы киноман");
-    } else {
-        alert("Произошла ошибка");
-        console.log("Произошла ошибка");
-    }
-}
-
-// detectPersonalLevel();
-
-
-
-
-// function showMyDB (property) {
-//     if (property.privat) {
-//         console.log(property);
-//     }
-// }
-// showMyDB(personalMovieDB);
-
-function showMyDB (property) {
-    if (!property) {
-        console.log(personalMovieDB);
-    }
-}
-
-// showMyDB(personalMovieDB.privat)
-
-
-
-
-function writeYourGenres () {
-    for (let i = 1; i <= 3; i++) {
-        let genre = prompt(`Ваш любимый жанр под номером ${i}`);
-
-        if (genre == '' || genre == null) {
-            i--;
-        } else {
-            personalMovieDB.genres[i-1] = genre;
-        }
-
-    }
-    console.log(personalMovieDB);
-}
-
-writeYourGenres();
-
-
-
-// ========= Задание 3 =========================================
+// ========= Задание 4 =========================================
 
 /* 
-1) Создать функцию showMyDB, которая будет проверять свойство privat. Если стоит в позиции
-false - выводит в консоль главный объект программы
+1) У нас уже есть рабочее приложение, состоящее из отдельных функций. Представьте, что
+перед вами стоит задача переписать его так, чтобы все функции стали методами объекта personalMovieDB
+Такое случается в реальных продуктах при смене технологий или подхода к архитектуре программы
 
-2) Создать функцию writeYourGenres в которой пользователь будет 3 раза отвечать на вопрос 
-"Ваш любимый жанр под номером ${номер по порядку}". Каждый ответ записывается в массив данных
-genres
+2) Создать метод toggleVisibleMyDB, который при вызове будет проверять свойство privat. Если оно false - он
+переключает его в true, если true - переключает в false. Протестировать вместе с showMyDB.
 
-P.S. Функции вызывать не обязательно 
+3) В методе writeYourGenres запретить пользователю нажать кнопку "отмена" или оставлять пустую строку. 
+Если он это сделал - возвращать его к этому же вопросу. 
+После того, как все жанры введены - при помощи метода forEach вывести в консоль сообщения в таком виде:
+"Любимый жанр #(номер по порядку, начиная с 1) - это (название из массива)" 
 */
